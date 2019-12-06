@@ -16,10 +16,10 @@ int main() {
     // The descriptions of each menu
     
     
-    string step_1_description = "Display your heap";
-    string step_2_description = "Create an empty min heap";
-    string step_3_description = "Creates a min heap using user entered data";
-    string step_4_description = "Generate a random heap";
+    string step_1_description = "Converts a decimal number in to binary";
+    string step_2_description = "Converts a binary number to decimal";
+    string step_3_description = "Runs radix sort and quicksort on an array you give";
+    string step_4_description = "Compares the time of radix sort and quicksort";
     string quit_description = "Quits the program";
     
     MenuOption op1(step_1_description, &Step1);

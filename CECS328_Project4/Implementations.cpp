@@ -3,6 +3,7 @@
 // Project: Project 4
 
 #include "Implementations.hpp"
+#include "Timer.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -10,7 +11,6 @@
 using namespace std;
 
 void Step1()    {
-
 }
 
 void Step2()    {
@@ -22,27 +22,78 @@ void Step3()    {
 }
 
 void Step4()    {
-
+    int n;
+    int M;
+    int* arr;
+    Timer sort_timer;
+    
+    // gets the information to create the values
+    cout << "Please enter in the size of the array you would like: " << endl;
+    cin >> n;
+    cout << "Please enter in the maximum values for the array you would like: " << endl;
+    cin >> M;
+    cin.ignore();
+    arr = new int[n];
+    get_random_array(arr, n, M);
+    
+    cout << "Array before sort: " << endl;
+    print_array(arr, n);
+    // Sorts the array
+    cout << "Sorting array using quicksort. . ." << endl;
+    sort_timer.start_timer();
+    quicksort(arr, 0, n-1);
+    sort_timer.stop_timer();
+    
+    // Prints the results
+    cout << "Sorted using quicksort. Time: " << sort_timer.get_time() << endl;
+    if(n < 100) {
+        cout << "Here is the sorted array:" << endl;
+        print_array(arr, n);
+    }
+    
 }
 
 void Quit() {
-    
+    exit(0);
 }
 /*
-int* radix_sort(int* arr, int size_of_arr)  {
-
-}
-int* quicksort(int* arr, int p, int r)  {
-
-}
-int partition(int* arr, int p, int r)   {
+void radix_sort(int* arr, int size_of_arr)  {
 
 }
  */
 
+void quicksort(int* arr, int p, int r)  {
+    if(p < r)   {
+        int q = partition(arr, p, r);
+        quicksort(arr, p, q-1);
+        quicksort(arr, q+1, r);
+    }
+}
+
+int partition(int* arr, int p, int r)   {
+    int x = arr[r];
+    
+    int i = p - 1;
+    
+    for (int j = p; j < r; j++)   {
+        if (arr[j] <= x)    {
+            i = i+1;
+            swap(arr, i, j);
+        }
+    }
+    swap(arr, i+1, r);
+    
+
+    return i+1;
+}
+ 
+
 void print_array(int* arr, int size_of_arr) {
     for (int i = 0; i < size_of_arr; i++)   {
-        cout << *(arr+i);
+        cout << arr[i];
+        if (i != size_of_arr-1) {
+            cout << ", ";
+        }
     }
     
     cout << endl;
@@ -148,4 +199,13 @@ int* copyArray(int* arrayToBeCopied, int sizeOfArray)   {
         newArray[i] = arrayToBeCopied[i];
     }
     return newArray;
+}
+
+
+
+
+void swap(int* arr, int i, int j)   {
+    int temp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = temp;
 }

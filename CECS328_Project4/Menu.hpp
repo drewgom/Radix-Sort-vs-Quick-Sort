@@ -2,12 +2,10 @@
 // Class: CECS328
 // Project: Project 4
 
-#include <iostream>
+#ifndef Menu_hpp
+#define Menu_hpp
 
 using namespace std;
 
-int main() {
-    
-    
-    return 0;
-}
+
+#endif

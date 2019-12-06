@@ -36,31 +36,69 @@ void Step4()    {
     arr = new int[n];
     get_random_array(arr, n, M);
     
-    cout << "Array before sort: " << endl;
-    print_array(arr, n);
+    if (n < 100)    {
+        cout << "Array before sort: " << endl;
+        print_array(arr, n);
+        
+    }
     // Sorts the array
     cout << "Sorting array using quicksort. . ." << endl;
     sort_timer.start_timer();
     quicksort(arr, 0, n-1);
     sort_timer.stop_timer();
+    double quicksort_time = sort_timer.get_time();
     
     // Prints the results
-    cout << "Sorted using quicksort. Time: " << sort_timer.get_time() << endl;
+    if (quicksort_time <= 1000000000)  {
+        cout << "Elapsed time for quicksort: " << quicksort_time/1000000 << "ms" << endl;
+    }
+    else {
+        cout << "Elapsed time for quicksort: " << quicksort_time/1000000000 << "sec" << endl;
+    }
     if(n < 100) {
         cout << "Here is the sorted array:" << endl;
         print_array(arr, n);
     }
+    
+    
+    
+    
+    
     
 }
 
 void Quit() {
     exit(0);
 }
+
 /*
 void radix_sort(int* arr, int size_of_arr)  {
 
 }
  */
+
+void counting_sort(int* arr, int* second_array, int size_of_arr, int largest_possible_value)   {
+    int* amount_of_each_number = new int[largest_possible_value+1];
+    
+    for (int i = 0; i < largest_possible_value+1; i++)    {
+        amount_of_each_number[i] = 0;
+    }
+    
+    for (int i = 0; i < size_of_arr; i++)    {
+        amount_of_each_number[arr[i]] += 1;
+    }
+    
+    for (int i = 1; i < largest_possible_value+1; i++)       {
+        amount_of_each_number[i] = amount_of_each_number[i] + amount_of_each_number[i-1];
+    }
+    
+    for (int i = size_of_arr-1; i >= 0; i--)    {
+        // TODO: try as second_array[amount_of_each_number[arr[i]]]
+        second_array[amount_of_each_number[arr[i]]-1] = arr[i];
+        amount_of_each_number[arr[i]] -= 1;
+    }
+    
+}
 
 void quicksort(int* arr, int p, int r)  {
     if(p < r)   {

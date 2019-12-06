@@ -15,6 +15,7 @@ void Step3();
 void Step4();
 void Quit();
 void radix_sort(int* arr, int size_of_arr);
+void counting_sort(int* arr, int* second_array, int size_of_arr, int largest_possible_value);
 void quicksort(int* arr, int p, int r);
 int partition(int* arr, int p, int r);
 void print_array(int* arr, int size_of_arr);

@@ -7,24 +7,108 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <cmath>
 
 using namespace std;
 
 void Step1()    {
+    int k;
+    int num;
+    cout << "Please input a number of bit places you would like: " << endl;
+    cin >> k;
+    cout << "Please input the number you want turned in to binary: " << endl;
+    cin >> num;
+    
+    int* array_of_bits = new int[k];
+    int num_to_be_divided = num;
+    // Turns the number in to its binary form
+    for (int i = k-1; i >= 0; i--)  {
+        array_of_bits[i] = num_to_be_divided % 2;
+        num_to_be_divided = num_to_be_divided / 2;
+    }
+    
+    
+    // Prints the number in binary
+    cout << num << " in " << k << " bits is: " << endl;
+    for (int i = 0; i < k; i++)   {
+        cout << array_of_bits[i];
+    }
+    
+    cout << endl;
+    
+    
 }
 
 void Step2()    {
-
+    int size_of_user_input;
+    int* array_of_bits;
+    string user_input;
+    
+    // gets the user input
+    cout << "Please input a binary number" << endl;
+    getline(cin,user_input);
+    
+    size_of_user_input = user_input.length();
+    get_array_of_ints_from_string(user_input, array_of_bits, size_of_user_input, false);
+    
+    // now, from every power in the string, if there is a 1, then we want to add 2^(size - 1 - index) to the string.
+    int number_the_user_input = 0;
+    for (int i = 0; i < size_of_user_input; i++)    {
+        if (array_of_bits[i] == 1)  {
+            number_the_user_input += pow(2, (size_of_user_input - 1 - i));
+        }
+    }
+    
+    // Displays the input
+    cout << "Your input was: " << number_the_user_input << endl;
+    
+    
+    
 }
 
 void Step3()    {
-
+    int *arr;
+    int *arrCopy;
+    int size;
+    int max = 0;
+    
+    string input_string;
+    cout << "Please enter in your array: " << endl;
+    getline(cin, input_string);
+    
+    // gets the information
+    get_array_of_ints_from_string(input_string, arr, size, true);
+    arrCopy = copyArray(arr, size);
+    
+    
+    // gets the max value of the array. this is for the radix sort
+    for(int i=0; i < size; i++)    {
+        if(arr[i] > max)   {
+            max = arr[i];
+        }
+    }
+    
+    // sorts the arrays
+    quicksort(arr, 0, size-1);
+    radix_sort(arrCopy, size, max);
+    
+    // prints the values
+    cout << "The array sorted with quicksort: " << endl;
+    print_array(arr, size);
+    cout << "The array sorted with radix sort: " << endl;
+    print_array(arrCopy, size);
+    
+    
+    delete arr;
+    delete arrCopy;
 }
+
 
 void Step4()    {
     int n;
     int M;
     int* arr;
+    int* arr_for_radix;
     Timer sort_timer;
     
     // gets the information to create the values
@@ -35,6 +119,7 @@ void Step4()    {
     cin.ignore();
     arr = new int[n];
     get_random_array(arr, n, M);
+    arr_for_radix = copyArray(arr, n);
     
     if (n < 100)    {
         cout << "Array before sort: " << endl;
@@ -48,6 +133,12 @@ void Step4()    {
     sort_timer.stop_timer();
     double quicksort_time = sort_timer.get_time();
     
+    cout << "Sorting array using radix sort. . ." << endl;
+    sort_timer.start_timer();
+    radix_sort(arr_for_radix, n, M);
+    sort_timer.stop_timer();
+    double radix_sort_time = sort_timer.get_time();
+    
     // Prints the results
     if (quicksort_time <= 1000000000)  {
         cout << "Elapsed time for quicksort: " << quicksort_time/1000000 << "ms" << endl;
@@ -55,47 +146,93 @@ void Step4()    {
     else {
         cout << "Elapsed time for quicksort: " << quicksort_time/1000000000 << "sec" << endl;
     }
-    if(n < 100) {
-        cout << "Here is the sorted array:" << endl;
-        print_array(arr, n);
+    
+    if (radix_sort_time <= 1000000000)  {
+        cout << "Elapsed time for radix sort: " << radix_sort_time/1000000 << "ms" << endl;
+    }
+    else {
+        cout << "Elapsed time for radix sort: " << radix_sort_time/1000000000 << "sec" << endl;
+    }
+    
+    if (quicksort_time < radix_sort_time)  {
+        cout << "The quicksort method was faster than radix sort by " << ((radix_sort_time-quicksort_time)/quicksort_time)*100 <<"%" << endl;
+    }
+    else if(quicksort_time > radix_sort_time)    {
+        cout << "The radix sort was faster than the quicksort method by " << ((quicksort_time-radix_sort_time)/radix_sort_time)*100 << "%" << endl;
+    }
+    else    {
+        cout << "The two algorithms took an equal amount of time." << endl;
     }
     
     
+    if(n < 100) {
+        cout << "Here is the sorted array from quicksort:" << endl;
+        print_array(arr, n);
+        
+        cout << "Here is the sorted array from radix sort:" << endl;
+        print_array(arr_for_radix, n);
+    }
     
-    
-    
+    delete arr;
+    delete arr_for_radix;
     
 }
+
 
 void Quit() {
     exit(0);
 }
 
-/*
-void radix_sort(int* arr, int size_of_arr)  {
 
+
+
+
+
+
+
+
+// ****************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+void radix_sort(int* &arr, int size_of_arr, int largest_possible_value)  {
+    for (int i = 1; largest_possible_value/i > 0; i = i * 10)   {
+        int* new_array = new int[size_of_arr];
+        counting_sort_for_radix(arr, new_array, size_of_arr, 10, i);
+        int* temp_array = arr;
+        arr = new_array;
+        delete temp_array;
+        
+    }
 }
- */
+ 
 
-void counting_sort(int* arr, int* second_array, int size_of_arr, int largest_possible_value)   {
-    int* amount_of_each_number = new int[largest_possible_value+1];
+// I decided to do counting sort as the stable sort for the radix sort
+void counting_sort_for_radix(int* arr, int* second_array, int size_of_arr, int number_of_radix_options, int factor)   {
+    int* amount_of_each_number = new int[number_of_radix_options];
     
-    for (int i = 0; i < largest_possible_value+1; i++)    {
+    for (int i = 0; i < number_of_radix_options; i++)    {
         amount_of_each_number[i] = 0;
     }
     
     for (int i = 0; i < size_of_arr; i++)    {
-        amount_of_each_number[arr[i]] += 1;
+        amount_of_each_number[(arr[i]/factor)%number_of_radix_options] += 1;
     }
     
-    for (int i = 1; i < largest_possible_value+1; i++)       {
+    for (int i = 1; i < number_of_radix_options; i++)       {
         amount_of_each_number[i] = amount_of_each_number[i] + amount_of_each_number[i-1];
     }
     
     for (int i = size_of_arr-1; i >= 0; i--)    {
-        // TODO: try as second_array[amount_of_each_number[arr[i]]]
-        second_array[amount_of_each_number[arr[i]]-1] = arr[i];
-        amount_of_each_number[arr[i]] -= 1;
+        second_array[amount_of_each_number[(arr[i]/factor)%number_of_radix_options]-1] = arr[i];
+        amount_of_each_number[(arr[i]/factor)%number_of_radix_options] -= 1;
     }
     
 }

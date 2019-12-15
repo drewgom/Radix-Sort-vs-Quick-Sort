@@ -16,7 +16,7 @@ int main() {
     // The descriptions of each menu
     
     
-    string step_1_description = "Converts a decimal number in to binary";
+    string step_1_description = "Converts a decimal number in to k-bit binary representation";
     string step_2_description = "Converts a binary number to decimal";
     string step_3_description = "Runs radix sort and quicksort on an array you give";
     string step_4_description = "Compares the time of radix sort and quicksort";
